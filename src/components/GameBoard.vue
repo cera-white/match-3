@@ -2,7 +2,9 @@
   <div class="game-board">
     <div class="game-board__row" v-for="(row, rowIndex) in tiles" :key="`row-${rowIndex}`">
       <div class="game-board__tile" v-for="(tile, tileIndex) in row" :key="`tile-${tileIndex}`">
-        {{ tile.type }}
+        <span>Row: {{ tile.row }}</span>
+        <span>Col: {{ tile.col }}</span>
+        <span>{{ tile.type }}</span>
       </div>
     </div>
   </div>
@@ -24,7 +26,9 @@ export default {
   data() {
     const tiles = []
     const tileTypes = ['Heart', 'Star', 'Rainbow', 'Horseshoe', 'Balloon']
-    const tile = {
+    const emptyTile = {
+      row: null,
+      col: null,
       type: null
     }
 
@@ -33,7 +37,7 @@ export default {
       const row = []
 
       for (let c = 0; c < this.columns; c++) {
-        const newTile = Object.assign({}, tile, { type: tileTypes[Math.floor(Math.random() * tileTypes.length)] })
+        const newTile = Object.assign({}, emptyTile, { row: r, col: c, type: tileTypes[Math.floor(Math.random() * tileTypes.length)] })
         row.push(newTile)
       }
 
@@ -42,7 +46,8 @@ export default {
 
     return {
       tiles,
-      tileTypes
+      tileTypes,
+      emptyTile
     }
   }
 }
@@ -51,8 +56,14 @@ export default {
 <style scoped>
   .game-board__tile {
     display: inline-block;
-    width: 75px;
-    height: 75px;
+    width: 100px;
+    height: 100px;
     border: 1px solid black;
+  }
+
+  .game-board__tile span {
+    display: block;
+    margin: 0;
+    padding: 0;
   }
 </style>
