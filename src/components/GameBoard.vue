@@ -1,7 +1,7 @@
 <template>
   <div class="game-board">
-    <div class="game-board__row" v-for="(row, rowIndex) in tiles" :key="`row-${rowIndex}`">
-      <div class="game-board__tile" v-for="(tile, tileIndex) in row" :key="`tile-${tileIndex}`">
+    <div class="game-board__row" v-for="row in rows" :key="`row-${row}`">
+      <div class="game-board__tile" v-for="tile in tiles.slice((row - 1) * columns, row * columns)" :key="`tile-r${tile.row}-c${tile.col}`">
         <span>Row: {{ tile.row }}</span>
         <span>Col: {{ tile.col }}</span>
         <span>{{ tile.type }}</span>
@@ -21,33 +21,31 @@ export default {
     columns: {
       type: Number,
       default: 8
+    },
+    tileTypes: {
+      type: Array,
+      default() {
+        return ['heart', 'star', 'rainbow', 'horseshoe', 'balloon']
+      }
     }
   },
   data() {
     const tiles = []
-    const tileTypes = ['Heart', 'Star', 'Rainbow', 'Horseshoe', 'Balloon']
-    const emptyTile = {
-      row: null,
-      col: null,
-      type: null
-    }
 
     // for each row
     for (let r = 0; r < this.rows; r++) {
-      const row = []
-
       for (let c = 0; c < this.columns; c++) {
-        const newTile = Object.assign({}, emptyTile, { row: r, col: c, type: tileTypes[Math.floor(Math.random() * tileTypes.length)] })
-        row.push(newTile)
+        const tile = {
+          row: r,
+          col: c,
+          type: this.tileTypes[Math.floor(Math.random() * this.tileTypes.length)]
+        }
+        tiles.push(tile)
       }
-
-      tiles.push(row)
     }
 
     return {
-      tiles,
-      tileTypes,
-      emptyTile
+      tiles
     }
   }
 }
