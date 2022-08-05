@@ -1,5 +1,7 @@
 # Workshop: Create a Match 3 Game
 
+## About the Project
+
 Something _like_ https://en.wikipedia.org/wiki/Bejeweled
 
 8x8 grid composed of multi-value tiles
@@ -36,3 +38,27 @@ milestones:
 - lose condition checked
 - points
 - bonus items?
+
+
+## Project Setup
+```
+yarn install
+```
+
+### Compiles and hot-reloads for development
+```
+yarn serve
+```
+
+### Compiles and minifies for production
+```
+yarn build
+```
+
+### Lints and fixes files
+```
+yarn lint
+```
+
+### Customize configuration
+See [Configuration Reference](https://cli.vuejs.org/config/).
