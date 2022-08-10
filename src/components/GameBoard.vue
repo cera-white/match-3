@@ -84,7 +84,7 @@ export default {
   },
   methods: {
     calculateTileSize() {
-      const boardSize = this.$refs.gameBoard.clientHeight - 24 // padding on game-board__wrapper x 2 (top & bottom)
+      const boardSize = Math.min(this.$refs.gameBoard.clientHeight, this.$refs.gameBoard.clientWidth) - 24 // padding on game-board__wrapper x 2 (top & bottom)
       const tileSize = Math.floor(boardSize / this.rows)
 
       this.tileSize = tileSize
