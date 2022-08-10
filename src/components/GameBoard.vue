@@ -15,7 +15,8 @@
             Col: {{ tile.col }} <br/>
             ID: {{ tile.id }}
           </span>
-          <img class="game-board__tile-image" 
+          <img class="game-board__tile-image"
+            :class="{ 'game-board__tile-image--highlighted': tile.highlighted }"
             :src="require(`@/assets/tiles/${tile.type}.png`)" 
             :alt="tile.type" 
             draggable="true"
@@ -62,7 +63,8 @@ export default {
           row: r,
           col: c,
           type: this.tileTypes[Math.floor(Math.random() * this.tileTypes.length)],
-          active: false
+          active: false,
+          highlighted: false
         }
         tiles.push(tile)
         tileId++
@@ -89,11 +91,32 @@ export default {
 
       this.tileSize = tileSize
     },
-    selectTile(tile) {
-      tile.active = true
+    canMoveTile(currentTile, newTile) {
+      if (Math.abs(newTile.col - currentTile.col) > 1) {
+          // trying to move more than 1 space
+          return false
+        } else if (Math.abs(newTile.row - currentTile.row) > 1) {
+          // trying to move more than 1 space
+          return false
+        } else if (newTile.col != currentTile.col && newTile.row != currentTile.row) {
+          // trying to move diagonally
+          return false
+        } else if (newTile.col === currentTile.col && newTile.row === currentTile.row) {
+          // this is where you are already!
+          return false
+        }
+        return true
+    },
+    selectTile(currentTile) {
+      currentTile.active = true
+
+      // highlight available spaces to drag to
+      this.tiles.filter((newTile) => this.canMoveTile(currentTile, newTile)).forEach(newTile => newTile.highlighted = true)
     },
     unselectTile(tile) {
       tile.active = false
+
+      this.tiles.forEach(tile => tile.highlighted = false)
     },
     startDrag(evt, tile) {
       evt.dataTransfer.dropEffect = 'move'
@@ -109,18 +132,11 @@ export default {
       const newTile = this.tiles.find((tile) => tile.id == tileID)
 
       // only allow swapping of tiles next to each other
-      if (Math.abs(newTile.col - currentTile.col) > 1) {
-        // trying to move more than 1 space
-        return
-      } else if (Math.abs(newTile.row - currentTile.row) > 1) {
-        // trying to move more than 1 space
-        return
-      } else if (newTile.col != currentTile.col && newTile.row != currentTile.row) {
-        // trying to move diagonally
+      if (!this.canMoveTile(currentTile, newTile)) {
         return
       }
 
-      // TODO: check if swap is possible
+      // TODO: check if swap is makes a match - if not, cancel
 
       const newType = newTile.type
       const currentType = currentTile.type
@@ -161,6 +177,12 @@ export default {
   .game-board__tile-image {
     width: 100%;
     height: 100%;
+  }
+
+  .game-board__tile-image--highlighted {
+    background-image: url('~@/assets/tiles/active.png');
+    background-repeat: no-repeat;
+    background-size: cover;
   }
 
   .game-board__tile span {

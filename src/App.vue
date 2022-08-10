@@ -48,9 +48,9 @@ export default {
 
   body {
     font-family: 'Quicksand', sans-serif;
-    background-image: url('~@/assets/bg/alchemist2.png');
-    background-repeat: no-repeat; /* Do not repeat the image */
-    background-size: cover; /* Resize the background image to cover the entire container */
+    background-image: url('~@/assets/bg.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
     color: #ffffff;
     height: 100vh;
   }
