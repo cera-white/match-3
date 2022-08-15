@@ -39,6 +39,10 @@ milestones:
 - points
 - bonus items?
 
+what do you call a match?
+* is it just a line of 3 adjacent items?
+* or is it a grouping of items where at least 3 of them are in an adjacent line?
+
 
 ## Project Setup
 ```
