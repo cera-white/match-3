@@ -29,15 +29,15 @@ score:
     - each match composed of more than 3 items
 
 milestones:
-- board displays
-- can swap tiles
-- matches are detected
-- matches are removed
-- board falls into gaps
-- board fills in top
-- lose condition checked
-- points
-- bonus items?
+- [x] board displays
+- [x] can swap tiles
+- [x] matches are detected
+- [x] matches are removed
+- [ ] board falls into gaps
+- [ ] board fills in top
+- [ ] lose condition checked
+- [ ] points
+- [ ] bonus items?
 
 what do you call a match?
 * is it just a line of 3 adjacent items?

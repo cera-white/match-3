@@ -15,7 +15,8 @@
             Col: {{ tile.col }} <br/>
             ID: {{ tile.id }}
           </span>
-          <img class="game-board__tile-image"
+          <img v-if="tile.type"
+            class="game-board__tile-image"
             :class="{ 'game-board__tile-image--highlighted': tile.highlighted }"
             :src="require(`@/assets/tiles/${tile.type}.png`)"
             :alt="tile.type"
@@ -73,7 +74,8 @@ export default {
 
     return {
       tiles,
-      tileSize: 5
+      tileSize: 5,
+      score: 0
     }
   },
   computed: {
@@ -142,94 +144,87 @@ export default {
       currentTile.type = newType
       newTile.type = currentType
 
-      // TODO: check if swap is makes a match - if not, revert
+      // check if swap is makes a match - if not, revert
       const matches = this.detectMatches(currentTile)
       if (matches.length < 2) {
-        console.log(`[CERA DEBUG] Matches length is: ${matches.length}, reverting`)
         newTile.type = newType
         currentTile.type = currentType
       }
+
+      this.clearMatches()
     },
     detectMatches(startTile) {
       const matchedTiles = []
 
-      console.log('[CERA DEBUG] detectMatches > startTile:', startTile)
-
       // get upward matches
-      console.log('[CERA DEBUG] Getting upward matches...')
       for (let i = startTile.row - 1; i >= 0; i--) {
-        console.log('[CERA DEBUG] current index:', i)
         const tileToCompare = this.tiles.find((tile) => tile.row === i && tile.col === startTile.col)
-        console.log('[CERA DEBUG] tileToCompare:', tileToCompare)
         if (this.isMatch(startTile, tileToCompare)) {
-          console.log('[CERA DEBUG] Tiles are a match!')
           matchedTiles.push(tileToCompare)
         } else {
           // as soon as we find a non-match, break out of the loop
-          console.log('[CERA DEBUG] Tiles are NOT a match')
           break
         }
       }
 
       // get downward matches
-      console.log('[CERA DEBUG] Getting downward matches...')
-      for (let i = startTile.row + 1; i <= this.rows; i++) {
-        console.log('[CERA DEBUG] current index:', i)
+      for (let i = startTile.row + 1; i < this.rows; i++) {
         const tileToCompare = this.tiles.find((tile) => tile.row === i && tile.col === startTile.col)
-        console.log('[CERA DEBUG] tileToCompare:', tileToCompare)
         if (this.isMatch(startTile, tileToCompare)) {
-          console.log('[CERA DEBUG] Tiles are a match!')
           matchedTiles.push(tileToCompare)
         } else {
           // as soon as we find a non-match, break out of the loop
-          console.log('[CERA DEBUG] Tiles are NOT a match')
           break
         }
       }
 
       // get left matches
-      console.log('[CERA DEBUG] Getting left matches...')
       for (let i = startTile.col - 1; i >= 0; i--) {
-        console.log('[CERA DEBUG] current index:', i)
         const tileToCompare = this.tiles.find((tile) => tile.col === i && tile.row === startTile.row)
-        console.log('[CERA DEBUG] tileToCompare:', tileToCompare)
         if (this.isMatch(startTile, tileToCompare)) {
-          console.log('[CERA DEBUG] Tiles are a match!')
           matchedTiles.push(tileToCompare)
         } else {
           // as soon as we find a non-match, break out of the loop
-          console.log('[CERA DEBUG] Tiles are NOT a match')
           break
         }
       }
 
       // get right matches
-      console.log('[CERA DEBUG] Getting left matches...')
-      for (let i = startTile.col + 1; i <= this.columns; i++) {
-        console.log('[CERA DEBUG] current index:', i)
+      for (let i = startTile.col + 1; i < this.columns; i++) {
         const tileToCompare = this.tiles.find((tile) => tile.col === i && tile.row === startTile.row)
-        console.log('[CERA DEBUG] tileToCompare:', tileToCompare)
         if (this.isMatch(startTile, tileToCompare)) {
-          console.log('[CERA DEBUG] Tiles are a match!')
           matchedTiles.push(tileToCompare)
         } else {
           // as soon as we find a non-match, break out of the loop
-          console.log('[CERA DEBUG] Tiles are NOT a match')
           break
         }
       }
 
-      console.log('[CERA DEBUG] detectMatches > matchedTiles:', matchedTiles)
-
       return matchedTiles
     },
     isMatch(startTile, tileToCompare) {
-      console.log(`[CERA DEBUG] isMatch > startTile.type: ${startTile.type}, tileToCompare.type: ${tileToCompare.type}`)
       return startTile.type === tileToCompare.type
+    },
+    clearMatches() {
+      // for each tile on the board, check for matches
+      this.tiles.forEach((currentTile) => {
+        const matches = this.detectMatches(currentTile)
+        if (matches.length >= 2) {
+          // add points to score
+          this.score += matches.length
+
+          // matches found, removing matched tiles
+          currentTile.type = null
+          matches.forEach((matchedTile) => {
+            matchedTile.type = null
+          })
+        }
+      })
     }
   },
   mounted() {
     this.calculateTileSize()
+    this.clearMatches()
   }
 }
 </script>
