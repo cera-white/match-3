@@ -5,7 +5,7 @@
     </header>
     
     <aside class="match-3-app__left">
-      <!-- Left -->
+      <p>Score: {{ score }}</p>
     </aside>
 
     <game-board class="match-3-app__main"></game-board>
@@ -27,6 +27,11 @@ export default {
   name: 'App',
   components: {
     GameBoard
+  },
+  computed: {
+    score() {
+      return this.$store.state.score
+    }
   }
 }
 </script>

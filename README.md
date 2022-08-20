@@ -36,7 +36,7 @@ milestones:
 - [ ] board falls into gaps
 - [ ] board fills in top
 - [ ] lose condition checked
-- [ ] points
+- [x] points
 - [ ] bonus items?
 
 what do you call a match?

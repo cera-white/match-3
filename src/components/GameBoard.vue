@@ -15,14 +15,16 @@
             Col: {{ tile.col }} <br/>
             ID: {{ tile.id }}
           </span>
-          <img v-if="tile.type"
-            class="game-board__tile-image"
-            :class="{ 'game-board__tile-image--highlighted': tile.highlighted }"
-            :src="require(`@/assets/tiles/${tile.type}.png`)"
-            :alt="tile.type"
-            draggable="true"
-            @dragstart="startDrag($event, tile)"
-            @dragend="endDrag($event, tile)" />
+          <Transition name="tile">
+            <img v-if="tile.type"
+              class="game-board__tile-image"
+              :class="{ 'game-board__tile-image--highlighted': tile.highlighted }"
+              :src="require(`@/assets/tiles/${tile.type}.png`)"
+              :alt="tile.type"
+              :draggable="!gridRefilling"
+              @dragstart="startDrag($event, tile)"
+              @dragend="endDrag($event, tile)" />
+          </Transition>
         </div>
       </div>
     </div>
@@ -75,7 +77,7 @@ export default {
     return {
       tiles,
       tileSize: 5,
-      score: 0
+      gridRefilling: false
     }
   },
   computed: {
@@ -151,7 +153,9 @@ export default {
         currentTile.type = currentType
       }
 
-      this.clearMatches()
+      this.$nextTick(() => {
+        this.clearMatches()
+      })
     },
     detectMatches(startTile) {
       const matchedTiles = []
@@ -203,20 +207,22 @@ export default {
       return matchedTiles
     },
     isMatch(startTile, tileToCompare) {
-      return startTile.type === tileToCompare.type
+      return startTile.type && tileToCompare.type && startTile.type === tileToCompare.type
     },
     clearMatches() {
       // for each tile on the board, check for matches
       this.tiles.forEach((currentTile) => {
         const matches = this.detectMatches(currentTile)
         if (matches.length >= 2) {
-          // add points to score
-          this.score += matches.length
-
           // matches found, removing matched tiles
           currentTile.type = null
           matches.forEach((matchedTile) => {
             matchedTile.type = null
+          })
+
+          // add points to score
+          this.$nextTick(() => {
+            this.$store.commit('addToScore', matches.length + 1)
           })
         }
       })
@@ -268,5 +274,15 @@ export default {
     display: block;
     font-size: 12px;
     line-height: normal;
+  }
+
+  .tile-enter-active,
+  .tile-leave-active {
+    transition: opacity 1.0s ease;
+  }
+
+  .tile-enter-from,
+  .tile-leave-to {
+    opacity: 0;
   }
 </style>
