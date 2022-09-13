@@ -157,6 +157,13 @@ export default {
         this.clearMatches()
       })
     },
+    swapTiles(newTile, currentTile) {
+      const newType = newTile.type
+      const currentType = currentTile.type
+
+      currentTile.type = newType
+      newTile.type = currentType
+    },
     detectMatches(startTile) {
       const matchedTiles = []
 
@@ -226,6 +233,45 @@ export default {
           })
         }
       })
+
+      this.$nextTick(() => {
+        this.refillBoard()
+      })
+    },
+    refillBoard() {
+      this.gridRefilling = true
+      const reversedTiles = [...this.tiles].reverse()
+
+      console.log('[CERA DEBUG] refillBoard > reversedTiles:', reversedTiles)
+
+      // for each tile on the board, see if the space below it is blank
+      // if so, swap tiles
+      reversedTiles.forEach((reversedTile) => {
+        let tilePlaced = false
+
+        console.log('[CERA DEBUG] refillBoard > reversedTiles.forEach > reversedTile:', reversedTile)
+
+        while (!tilePlaced) {
+          const tileBelow = this.tiles.find((tile) => tile.col === reversedTile.col && tile.row === (reversedTile.row + 1))
+
+          console.log('[CERA DEBUG] refillBoard > reversedTiles.forEach > tileBelow:', tileBelow)
+
+          // if the tile below this one already has a valid type, then there's nothing to do, so break out of the loop
+          if (!tileBelow || tileBelow.type) {
+            console.log(`[CERA DEBUG] refillBoard > reversedTiles.forEach > tileBelow was empty or had a type, so there's nothing to do`)
+            tilePlaced = true
+            break
+          }
+
+          const currentTile = this.tiles.find((tile) => tile.id === reversedTile.id)
+
+          console.log('[CERA DEBUG] refillBoard > tileBelow had empty type, swapping tiles now...')
+          this.swapTiles(tileBelow, currentTile)
+          tilePlaced = true
+        }
+      })
+
+      this.gridRefilling = false
     }
   },
   mounted() {
