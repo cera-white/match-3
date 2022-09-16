@@ -65,7 +65,7 @@ export default {
           id: tileId,
           row: r,
           col: c,
-          type: this.tileTypes[Math.floor(Math.random() * this.tileTypes.length)],
+          type: this.getRandomType(),
           active: false,
           highlighted: false
         }
@@ -89,6 +89,9 @@ export default {
     }
   },
   methods: {
+    getRandomType() {
+      return this.tileTypes[Math.floor(Math.random() * this.tileTypes.length)]
+    },
     calculateTileSize() {
       const boardSize = Math.min(this.$refs.gameBoard.clientHeight, this.$refs.gameBoard.clientWidth) - 24 // padding on game-board__wrapper x 2 (top & bottom)
       const tileSize = Math.floor(boardSize / this.rows)
@@ -156,13 +159,6 @@ export default {
       this.$nextTick(() => {
         this.clearMatches()
       })
-    },
-    swapTiles(newTile, currentTile) {
-      const newType = newTile.type
-      const currentType = currentTile.type
-
-      currentTile.type = newType
-      newTile.type = currentType
     },
     detectMatches(startTile) {
       const matchedTiles = []
@@ -240,38 +236,51 @@ export default {
     },
     refillBoard() {
       this.gridRefilling = true
-      const reversedTiles = [...this.tiles].reverse()
 
-      console.log('[CERA DEBUG] refillBoard > reversedTiles:', reversedTiles)
+      // if no empty tiles in the board, skip this step
+      if (this.tiles.filter((tile) => tile.type === null).length < 1) {
+        this.gridRefilling = false
+        return;
+      }
 
-      // for each tile on the board, see if the space below it is blank
-      // if so, swap tiles
-      reversedTiles.forEach((reversedTile) => {
-        let tilePlaced = false
+      // for each column, for each non-empty tile starting from the bottom, check if the tile under it is empty
+      // if so, swap the tiles, else leave it alone
+      // once all non-empty tiles have been moved, then fill in remaining spaces
 
-        console.log('[CERA DEBUG] refillBoard > reversedTiles.forEach > reversedTile:', reversedTile)
+      // for each column...
+      // TODO: let's just do column 0 first, so drop out of loop once i > 0
+      for (let c = 0; c < 1; c++) {
+        // for each row starting from the bottom...
+        for (let r = (this.rows - 1); r > 0; r--) {
+          // get tile
+          const currentTile = this.tiles.find((tile) => tile.col === c && tile.row === r)
+          console.log('[CERA DEBUG] refillBoard > currentTile: ', currentTile)
 
-        while (!tilePlaced) {
-          const tileBelow = this.tiles.find((tile) => tile.col === reversedTile.col && tile.row === (reversedTile.row + 1))
+          // if tile is empty...
+          if (!currentTile.type) {
+            // get next non-empty tile
+            const nonEmptyTiles = this.tiles.filter((tile) => tile.col === c && tile.row < r && tile.type !== null).sort((a, b) => (a.row < b.row) ? 1 : -1)
 
-          console.log('[CERA DEBUG] refillBoard > reversedTiles.forEach > tileBelow:', tileBelow)
+            console.log('[CERA DEBUG] refillBoard > nonEmptyTiles:', nonEmptyTiles)
 
-          // if the tile below this one already has a valid type, then there's nothing to do, so break out of the loop
-          if (!tileBelow || tileBelow.type) {
-            console.log(`[CERA DEBUG] refillBoard > reversedTiles.forEach > tileBelow was empty or had a type, so there's nothing to do`)
-            tilePlaced = true
-            break
+            if (nonEmptyTiles.length > 0) {
+              const newTile = nonEmptyTiles[0]
+              console.log('[CERA DEBUG] refillBoard > newTile:', newTile)
+
+              const currentType = currentTile.type
+              const newType = newTile.type
+
+              // swap tiles
+              currentTile.type = newType
+              newTile.type = currentType
+            }
           }
-
-          const currentTile = this.tiles.find((tile) => tile.id === reversedTile.id)
-
-          console.log('[CERA DEBUG] refillBoard > tileBelow had empty type, swapping tiles now...')
-          this.swapTiles(tileBelow, currentTile)
-          tilePlaced = true
         }
-      })
+      }
 
-      this.gridRefilling = false
+      // TODO: fill in remaining empty spaces
+
+      // TODO: clear matches again, which will call this method again, until all tiles are filled
     }
   },
   mounted() {

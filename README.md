@@ -33,7 +33,7 @@ milestones:
 - [x] can swap tiles
 - [x] matches are detected
 - [x] matches are removed
-- [ ] board falls into gaps
+- [x] board falls into gaps
 - [ ] board fills in top
 - [ ] lose condition checked
 - [x] points
