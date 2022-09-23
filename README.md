@@ -34,7 +34,7 @@ milestones:
 - [x] matches are detected
 - [x] matches are removed
 - [x] board falls into gaps
-- [ ] board fills in top
+- [x] board fills in top
 - [ ] lose condition checked
 - [x] points
 - [ ] bonus items?

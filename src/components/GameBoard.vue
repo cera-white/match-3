@@ -248,24 +248,19 @@ export default {
       // once all non-empty tiles have been moved, then fill in remaining spaces
 
       // for each column...
-      // TODO: let's just do column 0 first, so drop out of loop once i > 0
-      for (let c = 0; c < 1; c++) {
+      for (let c = 0; c < this.columns; c++) {
         // for each row starting from the bottom...
         for (let r = (this.rows - 1); r > 0; r--) {
           // get tile
           const currentTile = this.tiles.find((tile) => tile.col === c && tile.row === r)
-          console.log('[CERA DEBUG] refillBoard > currentTile: ', currentTile)
 
           // if tile is empty...
           if (!currentTile.type) {
             // get next non-empty tile
             const nonEmptyTiles = this.tiles.filter((tile) => tile.col === c && tile.row < r && tile.type !== null).sort((a, b) => (a.row < b.row) ? 1 : -1)
 
-            console.log('[CERA DEBUG] refillBoard > nonEmptyTiles:', nonEmptyTiles)
-
             if (nonEmptyTiles.length > 0) {
               const newTile = nonEmptyTiles[0]
-              console.log('[CERA DEBUG] refillBoard > newTile:', newTile)
 
               const currentType = currentTile.type
               const newType = newTile.type
@@ -276,11 +271,17 @@ export default {
             }
           }
         }
+
+        // fill in remaining empty spaces
+        this.tiles.filter((tile) => tile.col === c && tile.type === null).forEach(tile => {
+          tile.type = this.getRandomType()
+        });
       }
 
-      // TODO: fill in remaining empty spaces
-
-      // TODO: clear matches again, which will call this method again, until all tiles are filled
+      // clear matches again, which will call this method again, until all tiles are filled
+      this.$nextTick(() => {
+        this.clearMatches()
+      })
     }
   },
   mounted() {
@@ -333,7 +334,7 @@ export default {
 
   .tile-enter-active,
   .tile-leave-active {
-    transition: opacity 1.0s ease;
+    transition: opacity 0.2s ease;
   }
 
   .tile-enter-from,
