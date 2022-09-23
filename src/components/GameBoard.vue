@@ -273,9 +273,11 @@ export default {
         }
 
         // fill in remaining empty spaces
-        this.tiles.filter((tile) => tile.col === c && tile.type === null).forEach(tile => {
-          tile.type = this.getRandomType()
-        });
+        this.$nextTick(() => {
+          this.tiles.filter((tile) => tile.col === c && tile.type === null).forEach(tile => {
+            tile.type = this.getRandomType()
+          })
+        })
       }
 
       // clear matches again, which will call this method again, until all tiles are filled
