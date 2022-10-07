@@ -3,7 +3,7 @@
     <header class="match-3-app__header">
       <h1>Ophelia's Potion Shop</h1>
     </header>
-    
+
     <aside class="match-3-app__left">
       <p>Score: {{ score }}</p>
     </aside>
@@ -39,6 +39,7 @@ export default {
 <style>
   html {
     box-sizing: border-box;
+    background-color: #000000;
   }
 
   *, *:before, *:after {
@@ -47,8 +48,8 @@ export default {
     padding: 0;
   }
 
-  img { 
-    display: block; 
+  img {
+    display: block;
   }
 
   body {
