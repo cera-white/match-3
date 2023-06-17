@@ -1,5 +1,7 @@
 # Workshop: Create a Match 3 Game
 
+![Social Preview](./social_preview.png)
+
 ## About the Project
 
 Something _like_ https://en.wikipedia.org/wiki/Bejeweled
